@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6e1a8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<title>Plate</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --cream:#f6e1a8; --paper:#fff; --ink:#111827; --line:#000;
+  --mut:#4b5563; --faint:#6b7280;
+  --orange:#ff7f4a; --teal:#45ad94; --yellow:#ffe711; --purple:#c994ff;
+  --sh:3px 3px 0 #000; --shl:6px 6px 0 #000; --shs:2px 2px 0 #000;
+  --r:14px;
+  --disp:"Bricolage Grotesque",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --body:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+html,body{background:var(--cream);color:var(--ink);overflow-x:hidden}
+body{
+  font:400 15.5px/1.55 var(--body);
+  padding-bottom:calc(88px + env(safe-area-inset-bottom));
+  padding-top:env(safe-area-inset-top);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{padding:26px 18px 44px;max-width:520px;margin:0 auto}
+.screen{display:none}
+.screen.on{display:block;animation:in .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ---------- badges + type ---------- */
+.badge{display:inline-flex;align-items:center;gap:6px;font:700 12.5px/1 var(--body);
+  background:var(--yellow);color:#000;border:2px solid #000;border-radius:999px;
+  padding:8px 13px;box-shadow:var(--shs)}
+.badge.o{background:var(--orange)} .badge.t{background:var(--teal);color:#fff}
+.badge.p{background:var(--purple)} .badge.w{background:#fff}
+.display{font:800 clamp(30px,8.6vw,39px)/1.08 var(--disp);letter-spacing:-.025em;margin:16px 0 0}
+.display.off{text-decoration:line-through;text-decoration-thickness:3px;color:var(--faint)}
+.lede{color:var(--mut);font-size:15.5px;margin-top:11px;line-height:1.6}
+h2{font:700 12.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;
+  color:#000;margin:32px 0 11px;opacity:.55}
+
+/* ---------- panels ---------- */
+.panel{background:var(--paper);border:2px solid #000;border-radius:var(--r);
+  box-shadow:var(--sh);padding:3px 16px;margin-top:11px}
+.tip{background:var(--purple);border:2px solid #000;border-radius:var(--r);
+  box-shadow:var(--shs);padding:14px 16px;margin-top:18px;font-size:14.5px;line-height:1.5}
+
+/* ---------- buttons ---------- */
+.acts{display:flex;gap:9px;margin-top:20px}
+.btn{flex:1;font:700 14.5px/1 var(--body);border:2px solid #000;border-radius:999px;
+  background:#fff;color:#000;padding:13px 16px;min-height:46px;cursor:pointer;
+  box-shadow:var(--shs);transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.btn.primary{background:var(--orange)}
+.btn.done{background:var(--teal);color:#fff}
+.btn.narrow{flex:0 0 auto;padding:13px 18px}
+.btn.danger{background:#ff5a5a;color:#fff}
+
+/* ---------- summary card → opens a drawer ---------- */
+.sumcard{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:#fff;border:2px solid #000;border-radius:var(--r);box-shadow:var(--sh);
+  padding:14px 15px;margin-top:10px;font:inherit;color:inherit;cursor:pointer;
+  transition:transform .1s,box-shadow .1s}
+.sumcard:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.sumcard .sc1{display:block;font:700 15.5px/1.25 var(--body)}
+.sumcard .sc2{display:block;font-size:13px;color:var(--mut);margin-top:4px;font-weight:500}
+.sumcard .scb{flex:1;min-width:0}
+.sumcard .scr{flex:0 0 auto;font:700 12px/1 var(--body);background:var(--yellow);
+  border:2px solid #000;border-radius:999px;padding:6px 10px;box-shadow:var(--shs)}
+.sumcard .scr.ok{background:var(--teal);color:#fff}
+.chev{flex:0 0 auto;font:700 19px/1 var(--body);opacity:.3}
+
+/* ---------- rows ---------- */
+.rows{list-style:none}
+.rows li{display:flex;align-items:flex-start;gap:13px;padding:15px 0;
+  border-bottom:2px solid rgba(0,0,0,.09)}
+.rows li:last-child{border-bottom:0}
+.rows .t{color:#000;opacity:.45;font:700 13px/1.4 var(--body);flex:0 0 46px;padding-top:2px}
+.rows .b{flex:1;min-width:0}
+.rows .n{display:block;font-size:15.5px;line-height:1.4;font-weight:500}
+.rows .w{display:block;font-size:13.5px;color:var(--faint);margin-top:3px;line-height:1.5}
+.rows .r{color:var(--faint);font:700 13px/1.4 var(--body);white-space:nowrap;padding-top:2px}
+.off .n{text-decoration:line-through;color:var(--faint)}
+
+/* ---------- checkbox ---------- */
+.chk{flex:0 0 auto;width:25px;height:25px;border-radius:7px;border:2px solid #000;
+  background:#fff;cursor:pointer;position:relative;padding:0;box-shadow:var(--shs);
+  transition:.12s}
+.chk:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.chk.on{background:var(--teal)}
+.chk.on::after{content:"";position:absolute;left:8px;top:3.5px;width:5px;height:11px;
+  border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(43deg)}
+
+/* ---------- options ---------- */
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid #000;
+  border-radius:var(--r);padding:16px 18px;margin-top:11px;color:#000;
+  font:inherit;cursor:pointer;box-shadow:var(--sh);transition:transform .1s,box-shadow .1s}
+.opt:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+.opt .on1{font:700 16px/1.25 var(--body)}
+.opt .on2{display:block;font-size:13.5px;color:var(--mut);margin-top:5px;font-weight:500}
+.opt.sel{background:var(--teal);color:#fff}
+.opt.sel .on2{color:rgba(255,255,255,.82)}
+
+/* ---------- week ---------- */
+.wk{list-style:none}
+.wk li{display:flex;gap:13px;padding:13px 0;border-bottom:2px solid rgba(0,0,0,.09);font-size:14.5px}
+.wk li:last-child{border-bottom:0}
+.wk .d{flex:0 0 36px;font:700 12px/1.5 var(--body);text-transform:uppercase;opacity:.45}
+.wk .m{flex:1;min-width:0;line-height:1.45}
+.wk .m i{font-style:normal;color:var(--faint)}
+.wk li.now .d{opacity:1;color:var(--orange)}
+.wk li.now .m{font-weight:700}
+
+/* ---------- chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.chip{font:700 12.5px/1 var(--body);padding:8px 12px;border-radius:999px;background:#fff;
+  border:2px solid #000;box-shadow:var(--shs);color:#000;opacity:.42}
+.chip.hit{background:var(--teal);color:#fff;opacity:1}
+
+/* ---------- misc ---------- */
+.note{font-size:13.5px;color:var(--mut);margin-top:15px;line-height:1.6}
+.note b{color:#000;font-weight:700}
+.sum{display:flex;justify-content:space-between;align-items:center;background:#fff;
+  border:2px solid #000;border-radius:var(--r);box-shadow:var(--sh);
+  padding:16px 18px;margin-top:11px;font-size:15.5px;font-weight:500}
+.sum b{font:800 17px/1 var(--disp)}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin:32px 0 11px}
+.hdr h2{margin:0}
+.hdr span{font:700 12.5px/1 var(--body);background:#fff;border:2px solid #000;
+  border-radius:999px;padding:6px 11px;box-shadow:var(--shs)}
+
+/* ---------- nav ---------- */
+/* floating island, detached from the screen edges. Deliberately short on the
+   y-axis — a tall bar eats phone screen and reads as heavy. */
+nav{position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(15px + env(safe-area-inset-bottom));
+  display:flex;gap:3px;background:var(--paper);
+  border:2px solid #000;border-radius:999px;box-shadow:var(--sh);
+  padding:4px;z-index:10;width:max-content;max-width:calc(100vw - 36px)}
+nav button{background:0;border:0;padding:0;cursor:pointer;font:inherit}
+nav .in{display:flex;align-items:center;gap:7px;
+  padding:8px 15px;border:2px solid transparent;border-radius:999px;transition:.13s;
+  font:700 12.5px/1 var(--body);color:#000;opacity:.45}
+nav button.on .in{background:var(--orange);border-color:#000;opacity:1}
+nav svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- profile header ---------- */
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.phead .hi{font:700 13px/1.3 var(--body);opacity:.5}
+.pav{width:42px;height:42px;border-radius:999px;border:2px solid #000;box-shadow:var(--shs);
+  background:#fff;padding:0;cursor:pointer;overflow:hidden;flex:0 0 auto;
+  display:grid;place-items:center;font:800 16px/1 var(--disp);transition:transform .1s,box-shadow .1s}
+.pav:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.pav img{width:100%;height:100%;display:block}
+
+/* ---------- hero (tap for recipe) ---------- */
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hero{display:block;width:100%;text-align:left;background:0;border:0;padding:0;
+  color:inherit;font:inherit;cursor:pointer}
+.hint{display:inline-block;margin-top:14px;font:700 13px/1 var(--body);
+  background:var(--yellow);border:2px solid #000;border-radius:999px;
+  padding:8px 13px;box-shadow:var(--shs)}
+
+/* ---------- swap control ---------- */
+.swap{flex:0 0 auto;width:42px;height:42px;border-radius:999px;border:2px solid #000;
+  background:var(--yellow);box-shadow:var(--shs);cursor:pointer;padding:0;
+  display:grid;place-items:center;transition:transform .1s,box-shadow .1s}
+.swap:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.swap svg{width:18px;height:18px;stroke:#000;fill:none;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- chosen-meal card ---------- */
+.pick{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid #000;
+  border-radius:var(--r);box-shadow:var(--sh);padding:15px 15px;margin-top:11px}
+.pickmain{flex:1;min-width:0;background:0;border:0;text-align:left;padding:0;
+  font:inherit;color:inherit;cursor:pointer}
+.pickmain .on1{display:block;font:700 16.5px/1.25 var(--body)}
+.pickmain .on2{display:block;font-size:13.5px;color:var(--mut);margin-top:5px;font-weight:500}
+
+/* ---------- onboarding: a little bit of magic ---------- */
+/* fill the viewport: question at the top, action anchored at the bottom */
+body.ob{padding-bottom:0}
+#s-ob .wrap{position:relative;overflow:hidden;display:flex;flex-direction:column;
+  min-height:100dvh;padding:26px 20px calc(26px + env(safe-area-inset-bottom))}
+#s-ob .obmid{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+#s-ob .acts{margin-top:auto;padding-top:28px}
+#s-ob .display{margin-top:20px}
+#s-ob .field{margin-top:20px}
+#s-ob .opts{margin-top:20px}
+/* the onigiri companion */
+.mascot{display:block;width:108px;height:96px;margin:0 0 18px;overflow:visible;
+  animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.9))}
+/* a soft wash of the step's colour behind everything */
+#s-ob .wash{position:absolute;left:-30%;right:-30%;top:-22%;height:62%;border-radius:50%;
+  z-index:0;opacity:.34;transition:background .45s ease;pointer-events:none}
+.motif{display:block;margin:4px 0 0;width:88px;height:88px;
+  animation:bob 3.4s ease-in-out infinite}
+.motif path,.motif circle,.motif ellipse,.motif line{stroke:#000;fill:none;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.motif .fill{fill:var(--yellow)} .motif .fill2{fill:var(--orange)}
+.motif .fill3{fill:var(--purple)} .motif .fill4{fill:var(--teal)}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+
+.sparks{position:absolute;inset:0;pointer-events:none;z-index:0}
+.sp{position:absolute;width:6px;height:6px;border-radius:99px;background:var(--yellow);
+  border:1.5px solid #000;opacity:0;animation:twinkle 5.4s ease-in-out infinite}
+.sp:nth-child(3n+2){background:var(--orange)}
+.sp:nth-child(3n+3){background:var(--purple);width:5px;height:5px}
+.sp:nth-child(4n+4){background:var(--teal)}
+.sp:nth-child(5n+1){width:8px;height:8px}
+/* subtler: drifts rather than jumps, and never fully opaque */
+@keyframes twinkle{0%,100%{opacity:0;transform:translateY(4px) scale(.55)}
+  50%{opacity:.85;transform:translateY(-5px) scale(1)}}
+
+#s-ob .display,#s-ob .lede,#s-ob .field,#s-ob .opts,#s-ob .panel,#s-ob .tip,#s-ob .acts{
+  position:relative;z-index:1;animation:rise .38s cubic-bezier(.2,.85,.25,1) both}
+#s-ob .lede{animation-delay:.05s} #s-ob .field,#s-ob .opts{animation-delay:.1s}
+#s-ob .panel,#s-ob .tip{animation-delay:.12s} #s-ob .acts{animation-delay:.16s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* wand-tap shimmer across the primary button */
+#s-ob .btn.primary{position:relative;overflow:hidden}
+#s-ob .btn.primary::after{content:"";position:absolute;top:0;bottom:0;width:45%;
+  left:-60%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+  animation:sweep 2.8s ease-in-out infinite}
+@keyframes sweep{0%{left:-60%}55%,100%{left:130%}}
+
+.ava{animation:pop .5s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.6) rotate(-8deg)}to{opacity:1;transform:none}}
+
+/* ---------- onboarding ---------- */
+.obtop{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.dots{display:flex;gap:5px}
+.dot{width:22px;height:5px;border-radius:99px;background:#000;opacity:.14;transition:.25s}
+.dot.on{opacity:1;background:var(--orange)}
+.stepno{font:700 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;opacity:.4}
+/* what you've already answered, so the flow feels like it's building something */
+.sofar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;min-height:0}
+.sofar span{font:700 11.5px/1 var(--body);background:#fff;border:2px solid #000;
+  border-radius:999px;padding:6px 10px;box-shadow:var(--shs);animation:pop .34s cubic-bezier(.2,1.3,.4,1) both}
+.field{width:100%;font:700 21px/1.2 var(--body);border:2px solid #000;border-radius:13px;
+  background:#fff;padding:16px;box-shadow:var(--sh);margin-top:14px;color:#000}
+.field::placeholder{color:#b9b2a0;font-weight:700}
+/* focus lifts the card instead of flooding it with colour */
+.field:focus{outline:0;background:#fff;box-shadow:var(--shl);transform:translate(-1px,-1px)}
+.field{transition:box-shadow .14s,transform .14s}
+.two{display:flex;gap:10px}
+.two .fw{flex:1;min-width:0}
+.unit{font:700 12px/1 var(--body);opacity:.5;text-transform:uppercase;letter-spacing:.08em;
+  display:block;margin-top:14px}
+.days{display:flex;gap:6px;margin-top:14px}
+.day{flex:1;font:700 12.5px/1 var(--body);border:2px solid #000;border-radius:11px;
+  background:#fff;padding:13px 0;box-shadow:var(--shs);cursor:pointer;color:#000;
+  transition:transform .1s,box-shadow .1s}
+.day:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.day.on{background:var(--teal);color:#fff}
+.opts{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.optbtn{flex:1 1 30%;font:700 14.5px/1.25 var(--body);border:2px solid #000;border-radius:13px;
+  background:#fff;padding:15px 12px;box-shadow:var(--shs);cursor:pointer;color:#000;
+  transition:transform .1s,box-shadow .1s}
+.optbtn:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+.optbtn.on{background:var(--teal);color:#fff}
+.optbtn small{display:block;font-weight:500;font-size:12px;opacity:.7;margin-top:4px}
+.ava{width:92px;height:92px;border-radius:999px;border:2px solid #000;
+  box-shadow:var(--sh);background:#fff;display:block}
+.statline{display:flex;justify-content:space-between;padding:13px 0;
+  border-bottom:2px solid rgba(0,0,0,.09);font-size:15px}
+.statline:last-child{border-bottom:0}
+.statline b{font:800 16px/1 var(--disp)}
+
+/* ---------- bottom sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:50;display:none}
+.sheet.on{display:block}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.45);animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheetbody{position:absolute;left:0;right:0;bottom:0;background:var(--cream);
+  border-top:2px solid #000;border-radius:24px 24px 0 0;max-height:90vh;overflow-y:auto;
+  padding:12px 20px calc(30px + env(safe-area-inset-bottom));
+  animation:up .28s cubic-bezier(.2,.9,.25,1)}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.grab{width:46px;height:5px;border-radius:99px;background:#000;opacity:.2;margin:0 auto 18px}
+.sheet h3{font:800 27px/1.15 var(--disp);letter-spacing:-.022em;margin:0 0 4px}
+.sheet .metarow{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.ing{list-style:none;background:#fff;border:2px solid #000;border-radius:var(--r);
+  box-shadow:var(--sh);padding:4px 16px;margin-top:11px}
+.ing li{display:flex;gap:11px;padding:11px 0;border-bottom:2px solid rgba(0,0,0,.08);
+  font-size:15px;line-height:1.4}
+.ing li:last-child{border-bottom:0}
+.ing li::before{content:"";width:8px;height:8px;border-radius:99px;background:var(--orange);
+  border:2px solid #000;flex:0 0 auto;margin-top:6px}
+.stp{list-style:none;counter-reset:s;margin-top:11px}
+.stp li{counter-increment:s;display:flex;gap:13px;padding:9px 0;font-size:15px;line-height:1.5}
+.stp li::before{content:counter(s);flex:0 0 28px;height:28px;border-radius:99px;
+  background:var(--yellow);border:2px solid #000;font:700 13px/24px var(--body);
+  text-align:center;box-shadow:var(--shs)}
+</style>
+</head>
+<body>
+
+<div class="screen" id="s-ob"><div class="wrap" id="ob"></div></div>
+<div class="screen on" id="s-now"><div class="wrap" id="now"></div></div>
+<div class="screen"    id="s-plan"><div class="wrap" id="plan"></div></div>
+<div class="screen"    id="s-shop"><div class="wrap" id="shop"></div></div>
+
+<div class="sheet" id="sheet">
+  <div class="scrim" data-close="1"></div>
+  <div class="sheetbody"><div class="grab"></div><div id="sheetin"></div></div>
+</div>
+
+<svg style="display:none"><symbol id="i-swap" viewBox="0 0 24 24">
+  <path d="M4 8h13l-3.5-3.5M20 16H7l3.5 3.5"/></symbol></svg>
+
+<nav>
+  <button class="on" data-t="now" aria-label="Now"><span class="in">
+    <svg viewBox="0 0 24 24"><path d="M3.5 11.5h17"/><path d="M5 11.5a7 7 0 0 1 14 0"/><path d="M4.5 15.5a4 4 0 0 0 4 3.5h7a4 4 0 0 0 4-3.5"/></svg>Now</span></button>
+  <button data-t="plan" aria-label="Plan"><span class="in">
+    <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8.5 3.2v3.4M15.5 3.2v3.4"/></svg>Plan</span></button>
+  <button data-t="shop" aria-label="Shop"><span class="in">
+    <svg viewBox="0 0 24 24"><path d="M3.5 4h2.1l2.2 10.8a2 2 0 0 0 2 1.6h7.3a2 2 0 0 0 2-1.55L20.5 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="17.5" cy="20" r="1.3"/></svg>Shop</span></button>
+</nav>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
