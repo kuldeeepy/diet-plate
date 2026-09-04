@@ -202,6 +202,12 @@ const fruitFor = d => { const b = U.breakfastFor(d); return b.rotate[dayNum(d) %
 const mealAt   = (d,s) => s==='bf' ? bfFor(d) : s==='snack' ? snackFor(d)
                         : s==='gym' ? POSTGYM  : planFor(d, s);
 
+// Breakfast is a rotation like any other slot, so resolve it like one. Hardcoding
+// 'bf' here pinned every breakfast recipe to the oats regardless of what was served.
+const mealById = id => id==='gym' ? POSTGYM
+                     : [...BREAKFASTS, ...LUNCH, ...DINNER, ...SNACK].find(m => m.id === id);
+const recipeId = (d, slot) => slot==='gym' ? 'gym' : mealAt(d, slot).id;
+
 // ---------- the day as a list of ACTIONS ----------
 // Walking a real day exposed that the things which break this system are not meals:
 // forgetting the packed lunch, frozen chicken, and Sunday prep never surfacing.
@@ -275,10 +281,6 @@ function tick(d, id){
 const LABEL = { bf:'Breakfast', lunch:'Lunch', snack:'Snack', gym:'Post-gym', dinner:'Dinner' };
 const SWAPICO = `<svg><use href="#i-swap"/></svg>`;
 const CHEV = `<span class="chev">›</span>`;
-
-const mealById = id => id==='bf' ? BREAKFAST : id==='gym' ? POSTGYM
-                     : [...LUNCH, ...DINNER, ...SNACK].find(m => m.id === id);
-const recipeId = (d, slot) => slot==='bf' ? 'bf' : slot==='gym' ? 'gym' : mealAt(d, slot).id;
 
 // Swapping is an explicit control, never a side effect of tapping the meal.
 function swapMeal(offset, kind){
@@ -459,7 +461,7 @@ function drawSheet(){
     const mon = monday(d), count = {};
     for (let i = 0; i < 7; i++){
       const day = plus(mon,i);
-      new Set([...BREAKFAST.micros, ...planFor(day,'lunch').micros,
+      new Set([...bfFor(day).micros, ...planFor(day,'lunch').micros,
                ...planFor(day,'dinner').micros, ...snackFor(day).micros])
         .forEach(k => count[k] = (count[k]||0)+1);
     }
@@ -509,7 +511,7 @@ function renderNow(){
            <div class="acts"><button class="btn" data-go="plan">See tomorrow</button></div>`;
   } else if (cur.kind === 'meal'){
     const m = mealAt(d, cur.slot), late = cur.t <= h;
-    const lede = cur.slot==='bf' ? `${BREAKFAST.base}<br>${fruitFor(d)}`
+    const lede = cur.slot==='bf' ? `${m.base}<br>${fruitFor(d)}`
                : cur.slot==='gym' ? POSTGYM.note
                : cur.slot==='snack' ? `${m.kcal} kcal · ${m.p}g protein`
                : m.how;
@@ -574,14 +576,14 @@ function renderPlan(){
       ${kind ? `<button class="swap" data-swapd="${kind}:1" aria-label="Swap ${kind}">${SWAPICO}</button>` : ''}
     </div>`;
 
-  const L = planFor(tm,'lunch'), D = planFor(tm,'dinner'), SN = snackFor(tm);
-  const kcal = BREAKFAST.kcal + L.kcal + SN.kcal + POSTGYM.kcal + D.kcal;
-  const prot = BREAKFAST.p    + L.p    + SN.p    + POSTGYM.p    + D.p;
+  const L = planFor(tm,'lunch'), D = planFor(tm,'dinner'), SN = snackFor(tm), B = bfFor(tm);
+  const kcal = B.kcal + L.kcal + SN.kcal + POSTGYM.kcal + D.kcal;
+  const prot = B.p    + L.p    + SN.p    + POSTGYM.p    + D.p;
 
   let h = `<span class="badge o">Decide tonight</span>
            <h1 class="display">${fmt(tm)}</h1>
            <p class="lede">Everything you will eat tomorrow, in order.</p>
-           ${row('Breakfast', BREAKFAST, null)}
+           ${row('Breakfast', B, null)}
            ${row('Lunch', L, 'lunch')}
            ${row('Snack · 5pm', SN, null)}
            ${row('Post-gym', POSTGYM, null)}
@@ -589,7 +591,7 @@ function renderPlan(){
            <div class="sum"><span>Whole day</span><b>${kcal} kcal · ${prot}g</b></div>`;
 
   const t = TG();
-  const gymKcal = BREAKFAST.kcal + L.kcal + POSTGYM.kcal + D.kcal;   // smoothie instead of snack
+  const gymKcal = B.kcal + L.kcal + POSTGYM.kcal + D.kcal;   // smoothie instead of snack
   const gap = t.kcal - gymKcal;
   h += `<div class="sum"><span>Your target</span><b>${t.kcal} kcal · ${t.p}g</b></div>
         <p class="note"><b>On gym days, skip the 5pm snack</b> — the smoothie replaces it,

@@ -211,6 +211,18 @@ const RECIPES = {
              'Chicken and veg down the middle, sauce over.','Roll tight, wrap in foil.'],
       note:'Travels well and eats fine at room temperature.'},
 
+  l6:{ing:['150g paneer','1 capsicum','½ onion','1½ cups rice','½ lemon','Salt, pepper'],
+      steps:['Cube the paneer, sear it in a dry hot pan 2 min a side. Do not stir it about.',
+             'Capsicum and onion in the same pan, 3 min — keep them with some bite.',
+             'Over the rice, lemon squeezed on top.'],
+      note:'Same protein bracket as the chicken bowl. Sear the paneer dry or it weeps.'},
+
+  l7:{ing:['½ cup moong dal','1 cup rice','50g paneer','150g curd','Turmeric, cumin','Salt'],
+      steps:['Dal and rice rinsed together into one pot, 3 cups water, turmeric.',
+             'Cumin in hot ghee, tip it in. Simmer 20 min till it goes soft and loose.',
+             'Paneer crumbled through at the end. Curd on the side.'],
+      note:'One pot, no cooker. The easiest thing on this list to get right.'},
+
   d1:{ing:['3 eggs','1 onion','1 tomato','1 green chilli','Turmeric, salt','2 ready rotis'],
       steps:['Oil, onion till golden, 3 min.','Tomato, chilli, turmeric — 2 min.',
              'Beat the eggs, pour in, stir constantly 2 min. Take it off while still soft.',
@@ -239,10 +251,18 @@ const RECIPES = {
              '½ cup water, simmer 5 min.','Slide the halved eggs in, 2 min. Do not stir hard.'],
       note:'Uses the Sunday boiled eggs. Almost no active work.'},
 
+  d6:{ing:['150g paneer','1 onion','1 tomato','1 green chilli','Turmeric, salt','2 ready rotis'],
+      steps:['Crumble the paneer by hand — a grater turns it to paste.',
+             'Onion 3 min, tomato and chilli 3 more, turmeric in.',
+             'Paneer through it for 2 minutes only, off the heat while still soft.',
+             'Rotis 40 seconds a side.'],
+      note:'Overcooked paneer goes squeaky. Two minutes is the whole trick.'},
+
   s1:{ing:['40g roasted chana','100g curd'],steps:['Open packet. Curd alongside.'],note:'The curd is what takes this from 8g protein to 14g.'},
   s2:{ing:['3 boiled eggs','Salt, pepper'],steps:['From the Sunday batch.'],note:'18g protein for ₹21. The cheapest protein per rupee here after soya.'},
   s3:{ing:['150g curd','A small handful of peanuts','1 boiled egg'],steps:['Stir the peanuts through the curd. Egg on the side.'],note:'The egg is what keeps rest days from dipping under your protein floor.'},
   s4:{ing:['1 banana','A handful of peanuts','100g curd'],steps:['No cooking involved.'],note:'The biggest snack here. Good before a heavy session.'},
+  s6:{ing:['100g paneer','1 amla','Salt, pepper'],steps:['Cube the paneer raw. Amla alongside.'],note:'The vegetarian stand-in for the boiled eggs. Amla is the vitamin C.'},
   s5:{ing:['1 amla','40g roasted chana','1 boiled egg'],steps:['Eat the amla first, it is sour.'],note:'Amla is one of the highest vitamin C foods there is.'},
   gym:{ing:['1 scoop whey','200ml milk','½ banana','1 tsp peanut butter'],
       steps:['Everything into the portable blender.','30 seconds. Drink within the hour.'],
