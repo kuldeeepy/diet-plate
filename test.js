@@ -9,6 +9,7 @@ const pure = app.slice(0, app.indexOf('// ---------- NOW ----------'));
 const ctx  = new Function(data + '\n' + pure + `
   return {weekPlan,planFor,available,snackFor,dayNum,monday,dow,key,plus,S,agenda,current,
           LUNCH,DINNER,BREAKFAST,BREAKFASTS,SNACK,POSTGYM,MICROS,TARGETS,thawNeeded,
+          RECIPES,bfFor,mealById,recipeId,
           UserAlgorithm,ACT,TRAIN_TYPES,refreshUser,targets};`)();
 
 // The suite runs as a real user: works Mon–Fri 11–7, trains 5 days with weights.
@@ -300,5 +301,31 @@ let dup = 0, unsorted = 0;
 ok('EDGE agenda never duplicates an action id', dup === 0, `(${dup})`);
 ok('EDGE agenda is sorted for every profile shape', unsorted === 0, `(${unsorted})`);
 
-console.log(`\n${fail ? fail + ' FAILED' : 'all 50 invariants hold'}\n`);
+// 51-53 ------------------------------------------- the breakfast on the plate is
+// the breakfast in the recipe. Every one of these failed before: the runtime pinned
+// slot 'bf' to BREAKFASTS[0], so a poha or eggs user opened the oats.
+let wrongRecipe = 0;
+ctx.BREAKFASTS.forEach(b => {
+  ctx.S.profile = {...base, diet:'nonveg', bf:'fixed', bfId:b.id};
+  ctx.refreshUser();
+  const d = mon0;
+  if (ctx.recipeId(d,'bf') !== b.id) wrongRecipe++;
+  if (ctx.mealById(ctx.recipeId(d,'bf')).name !== b.name) wrongRecipe++;
+});
+ok('every breakfast opens its own recipe, not the default one',
+   wrongRecipe === 0, `(${wrongRecipe} mismatches)`);
+
+ctx.S.profile = {...base, diet:'nonveg', bf:'vary'};
+ctx.refreshUser();
+const varied = new Set([...Array(14)].map((_,i) => ctx.recipeId(ctx.plus(mon0,i),'bf')));
+ok('a rotating breakfast actually rotates its recipe',
+   varied.size === ctx.BREAKFASTS.length, `(${varied.size} of ${ctx.BREAKFASTS.length})`);
+
+ok('every meal reachable from a slot has a recipe behind it',
+   [...ctx.BREAKFASTS, ...ctx.LUNCH, ...ctx.DINNER, ...ctx.SNACK]
+     .every(m => ctx.RECIPES[m.id] && ctx.mealById(m.id) === m));
+
+ctx.S.profile = base; ctx.refreshUser();
+
+console.log(`\n${fail ? fail + ' FAILED' : 'all 53 invariants hold'}\n`);
 process.exit(fail ? 1 : 0);

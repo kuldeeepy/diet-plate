@@ -41,7 +41,7 @@ These are estimates, not medical advice.
 node test.js
 ```
 
-50 invariants: the nutritional guarantees, the schedule rules, the algorithm checked
+53 invariants: the nutritional guarantees, the schedule rules, the algorithm checked
 against hand-computed reference values, and edge cases (no training, no job, 7-day
 work weeks, overnight shifts, BMI boundaries, ages 14-99, 40-160kg, empty profiles,
 vegetarian + no-prep, rejecting every meal).
@@ -54,4 +54,4 @@ vegetarian + no-prep, rejecting every meal).
 | `data.js` | meal library, recipes, shopping lists |
 | `app.js` | `UserAlgorithm`, rotation rules, rendering |
 | `sw.js` | network-first service worker |
-| `test.js` | the 50 invariants |
+| `test.js` | the 53 invariants |
