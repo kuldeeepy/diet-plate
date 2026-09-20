@@ -5,9 +5,14 @@
 <style>
   :root{ --bg:#f1f1f3; --ink:#18181b; --dim:#8a8a93; --line:#e2e2e7; }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+  html,body{margin:0;height:100%;overflow:hidden;background:#4E8FCE;color:var(--ink);
     font:14px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif}
-  canvas{position:fixed;inset:0;display:block}
+
+  /* Hero scene, exported from the Visual Vault Figma file. The heap settles onto its grass line. */
+  .sky{position:fixed;inset:0;z-index:0;pointer-events:none;
+       background:image-set(url(hero.webp) type("image/webp"), url(hero-fallback.jpg) type("image/jpeg"))
+                  center bottom/cover no-repeat}
+  canvas{position:fixed;inset:0;display:block;z-index:2}
 
   #bar{position:fixed;top:7vh;left:50%;transform:translateX(-50%);width:min(560px,86vw);z-index:10}
   .box{position:relative;display:flex;align-items:center;background:#fff;border-radius:16px;
@@ -111,6 +116,7 @@
   <div id="chips"></div>
 </div>
 <div id="via"></div>
+<div class="sky" role="img" aria-label="Open sky over a field of grass"></div>
 <div id="hero"></div>
 <div id="tip"></div>
 <div id="veil"></div>

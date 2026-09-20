@@ -12,11 +12,14 @@ function fit(ctx, t, maxW) {                 // trim to the real rendered width
 const cv = document.createElement('canvas');
 document.body.appendChild(cv);
 const ctx = cv.getContext('2d');
-let W, H, dpr;
+let W, H, dpr, GRASS = 0;   // viewport y where the grass line falls
 
 function resize() {
   dpr = Math.min(devicePixelRatio || 1, 2);
   W = innerWidth; H = innerHeight;
+  const IMG_W = 2400, IMG_H = 1600, GRASS_AT = 0.805;
+  const drawnH = IMG_H * Math.max(W / IMG_W, H / IMG_H);
+  GRASS = Math.round(Math.min(H - 60, Math.max(H * 0.35, H - drawnH * (1 - GRASS_AT))));
   cv.width = W * dpr; cv.height = H * dpr;
   cv.style.width = W + 'px'; cv.style.height = H + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -31,11 +34,12 @@ engine.velocityIterations = 8;
 engine.enableSleeping = true;
 
 // floor + side walls, rebuilt on resize so the heap always sits on the bottom edge
+const floorY = () => GRASS + 34;   // just inside the grass so the heap nestles in
 let walls = [];
 function layoutWalls() {
   Composite.remove(engine.world, walls);
   walls = [
-    Bodies.rectangle(W / 2, H + 200, W * 3, 400, { isStatic: true }),   // thick: thin floors get tunnelled
+    Bodies.rectangle(W / 2, floorY() + 200, W * 3, 400, { isStatic: true }),   // thick: thin floors get tunnelled
     Bodies.rectangle(-40, H / 2, 80, H * 3, { isStatic: true }),
     Bodies.rectangle(W + 40, H / 2, 80, H * 3, { isStatic: true }),
   ];
@@ -221,7 +225,7 @@ let last = performance.now();
     if (it.lifted) continue;
     if (it.body.collisionFilter.mask === 0) it.body.collisionFilter.mask = 0xFFFFFFFF;
     const p = it.body.position;
-    if (p.y > H + 300 || p.y < -H * 2 || p.x < -200 || p.x > W + 200) {
+    if (p.y > floorY() + 300 || p.y < -H * 2 || p.x < -200 || p.x > W + 200) {
       Body.setPosition(it.body, { x: W / 2 + (Math.random() - .5) * 200, y: -80 });
       Body.setVelocity(it.body, { x: 0, y: 2 });
     }
